@@ -10,6 +10,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 "VALIDATION_ERROR",
-                "Request validation failed.",
+                "입력값 검증에 실패했습니다.",
                 request,
                 validationErrors
         ));
@@ -51,9 +52,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 "VALIDATION_ERROR",
-                "Request constraints are invalid.",
+                "요청 조건이 올바르지 않습니다.",
                 request,
                 validationErrors
+        ));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.badRequest().body(buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_REQUEST_BODY",
+                "요청 본문 형식이 올바르지 않습니다.",
+                request,
+                Map.of()
         ));
     }
 
@@ -79,7 +94,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "INTERNAL_SERVER_ERROR",
-                "An unexpected error occurred.",
+                "예상하지 못한 오류가 발생했습니다.",
                 request,
                 Map.of()
         ));
