@@ -21,3 +21,10 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+kakao:
+  map:
+    # 카카오 로컬/길찾기 REST API 호출에 사용하는 키이다.
+    rest-api-key: ${KAKAO_REST_API_KEY:}
+    # 프론트엔드에서 카카오 지도 SDK를 붙일 때 사용하는 JavaScript 키이다.
+    javascript-key: ${KAKAO_JAVASCRIPT_KEY:}

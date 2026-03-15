@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import com.arriveontime.application.recommendation.RecommendDepartureResult;
 
 public record RecommendDepartureResponse(
-        String origin,
-        String destination,
+        PlaceSelectionResponse origin,
+        PlaceSelectionResponse destination,
         LocalDateTime targetArrivalTime,
         boolean strict,
         int allowedDelayMinutes,
@@ -18,8 +18,8 @@ public record RecommendDepartureResponse(
 
     public static RecommendDepartureResponse from(RecommendDepartureResult result) {
         return new RecommendDepartureResponse(
-                result.origin(),
-                result.destination(),
+                PlaceSelectionResponse.from(result.origin()),
+                PlaceSelectionResponse.from(result.destination()),
                 result.targetArrivalTime(),
                 result.strict(),
                 result.allowedDelayMinutes(),

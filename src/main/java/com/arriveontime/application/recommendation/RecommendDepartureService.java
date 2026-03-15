@@ -2,6 +2,7 @@ package com.arriveontime.application.recommendation;
 
 import java.util.Objects;
 
+import com.arriveontime.application.route.RoutePoint;
 import com.arriveontime.application.route.RouteProvider;
 import com.arriveontime.domain.arrival.ArrivalPolicy;
 import com.arriveontime.domain.recommendation.DepartureRecommendation;
@@ -22,8 +23,8 @@ public class RecommendDepartureService implements RecommendDepartureUseCase {
     public RecommendDepartureResult recommend(RecommendDepartureCommand command) {
         Objects.requireNonNull(command, "추천 요청은 비어 있을 수 없습니다.");
 
-        String origin = normalizePlace(command.origin(), "출발지는 비어 있을 수 없습니다.");
-        String destination = normalizePlace(command.destination(), "도착지는 비어 있을 수 없습니다.");
+        RoutePoint origin = command.origin();
+        RoutePoint destination = command.destination();
 
         TravelDuration travelDuration = routeProvider.getExpectedTravelDuration(origin, destination);
         ArrivalPolicy arrivalPolicy = new ArrivalPolicy(
@@ -44,13 +45,5 @@ public class RecommendDepartureService implements RecommendDepartureUseCase {
                 recommendation.bufferMinutes().value(),
                 recommendation.recommendedDepartureTime()
         );
-    }
-
-    private String normalizePlace(String value, String errorMessage) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(errorMessage);
-        }
-
-        return value.trim();
     }
 }

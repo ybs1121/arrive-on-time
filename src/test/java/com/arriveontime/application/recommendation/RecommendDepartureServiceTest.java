@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.arriveontime.application.route.RoutePoint;
 import com.arriveontime.application.route.RouteProvider;
 import com.arriveontime.domain.buffer.BufferPolicy;
 import com.arriveontime.domain.recommendation.RecommendationEngine;
@@ -25,10 +26,10 @@ class RecommendDepartureServiceTest {
     }
 
     @Test
-    void 추천_결과를_정상적으로_반환한다() {
+    void returnsRecommendationResult() {
         RecommendDepartureCommand command = new RecommendDepartureCommand(
-                "잠실역",
-                "강남역",
+                new RoutePoint("Jamsil Station", 37.5132612, 127.1001336),
+                new RoutePoint("Gangnam Station", 37.497175, 127.027926),
                 LocalDateTime.of(2026, 3, 16, 9, 0),
                 true,
                 0
@@ -36,25 +37,23 @@ class RecommendDepartureServiceTest {
 
         RecommendDepartureResult result = recommendDepartureUseCase.recommend(command);
 
-        assertThat(result.origin()).isEqualTo("잠실역");
-        assertThat(result.destination()).isEqualTo("강남역");
+        assertThat(result.origin().name()).isEqualTo("Jamsil Station");
+        assertThat(result.destination().name()).isEqualTo("Gangnam Station");
         assertThat(result.expectedTravelMinutes()).isEqualTo(25);
         assertThat(result.bufferMinutes()).isEqualTo(10);
         assertThat(result.recommendedDepartureTime()).isEqualTo(LocalDateTime.of(2026, 3, 16, 8, 25));
     }
 
     @Test
-    void 공백_출발지는_예외가_발생한다() {
-        RecommendDepartureCommand command = new RecommendDepartureCommand(
-                "   ",
-                "강남역",
+    void rejectsBlankPlaceName() {
+        assertThatThrownBy(() -> new RecommendDepartureCommand(
+                new RoutePoint("   ", 37.5132612, 127.1001336),
+                new RoutePoint("Gangnam Station", 37.497175, 127.027926),
                 LocalDateTime.of(2026, 3, 16, 9, 0),
                 true,
                 0
-        );
-
-        assertThatThrownBy(() -> recommendDepartureUseCase.recommend(command))
+        ))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("출발지는 비어 있을 수 없습니다.");
+                .hasMessage("\uC7A5\uC18C \uC774\uB984\uC740 \uBE44\uC5B4 \uC788\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.");
     }
 }

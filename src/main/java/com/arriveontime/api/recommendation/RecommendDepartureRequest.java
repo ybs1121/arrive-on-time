@@ -2,18 +2,20 @@ package com.arriveontime.api.recommendation;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import com.arriveontime.application.recommendation.RecommendDepartureCommand;
 
 public record RecommendDepartureRequest(
-        @NotBlank(message = "출발지는 비어 있을 수 없습니다.")
-        String origin,
+        @NotNull(message = "출발지는 비어 있을 수 없습니다.")
+        @Valid
+        PlaceSelectionRequest origin,
 
-        @NotBlank(message = "도착지는 비어 있을 수 없습니다.")
-        String destination,
+        @NotNull(message = "도착지는 비어 있을 수 없습니다.")
+        @Valid
+        PlaceSelectionRequest destination,
 
         @NotNull(message = "목표 도착 시각은 비어 있을 수 없습니다.")
         LocalDateTime targetArrivalTime,
@@ -28,8 +30,8 @@ public record RecommendDepartureRequest(
 
     public RecommendDepartureCommand toCommand() {
         return new RecommendDepartureCommand(
-                origin,
-                destination,
+                origin.toRoutePoint(),
+                destination.toRoutePoint(),
                 targetArrivalTime,
                 strict,
                 allowedDelayMinutes

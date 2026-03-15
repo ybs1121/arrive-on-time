@@ -4,5 +4,5 @@ import com.arriveontime.domain.travel.TravelDuration;
 
 public interface RouteProvider {
 
-    TravelDuration getExpectedTravelDuration(String origin, String destination);
+    TravelDuration getExpectedTravelDuration(RoutePoint origin, RoutePoint destination);
 }

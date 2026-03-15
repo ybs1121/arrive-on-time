@@ -3,9 +3,11 @@ package com.arriveontime.application.recommendation;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import com.arriveontime.application.route.RoutePoint;
+
 public record RecommendDepartureResult(
-        String origin,
-        String destination,
+        RoutePoint origin,
+        RoutePoint destination,
         LocalDateTime targetArrivalTime,
         boolean strict,
         int allowedDelayMinutes,
